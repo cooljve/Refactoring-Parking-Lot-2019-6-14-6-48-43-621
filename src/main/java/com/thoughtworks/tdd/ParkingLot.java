@@ -41,4 +41,12 @@ public class ParkingLot {
   public int getCapacity() {
     return capacity;
   }
+
+  public int getAvailabel(){
+    return capacity - map.size();
+  }
+
+  public double getAvailabelRate(){
+    return getAvailabel() / (double) capacity;
+  }
 }

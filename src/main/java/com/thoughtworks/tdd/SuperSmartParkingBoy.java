@@ -14,7 +14,7 @@ public class SuperSmartParkingBoy extends Parker {
     if (parkingLots.size() == 0) {
       throw new NOT_ENOUGH_POSITION_EXCEPTION();
     }
-    parkingLots.sort((a, b) -> (int) (((double) b.getMap().size() / b.getCapacity()) - ((double) a.getMap().size() / a.getCapacity())));
+    parkingLots.sort((a, b) -> (int) (b.getAvailabelRate() - a.getAvailabelRate()));
     return parkingLots.get(0).park(car);
   }
 }

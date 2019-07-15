@@ -15,7 +15,7 @@ public class SmartParkingBoy extends ParkingBoy {
     if (parkingLots.size() == 0) {
       throw new NOT_ENOUGH_POSITION_EXCEPTION();
     }
-    parkingLots.sort((a, b) -> (b.getCapacity() - b.getMap().size()) - (a.getCapacity() - a.getMap().size()));
+    parkingLots.sort((a, b) -> b.getAvailabel() - a.getAvailabel());
     return parkingLots.get(0).park(car);
   }
 }
