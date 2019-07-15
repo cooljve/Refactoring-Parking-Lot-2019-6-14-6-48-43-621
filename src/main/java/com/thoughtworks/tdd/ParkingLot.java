@@ -11,6 +11,16 @@ public class ParkingLot {
     this.capacity = capacity;
   }
 
+  public Car fetch(ParkingTicket ticket) {
+    return map.remove(ticket);
+  }
+
+  public ParkingTicket park(Car car) {
+    ParkingTicket ticket = new ParkingTicket();
+    map.put(ticket, car);
+    return ticket;
+  }
+
   public boolean isFull() {
     return capacity <= map.size();
   }

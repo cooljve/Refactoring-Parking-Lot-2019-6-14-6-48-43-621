@@ -18,8 +18,7 @@ public class ParkingBoy {
     if (getParkingLotList().get(0).getMap().containsValue(car) || car == null) {
       return new Response("", null);
     }
-    ParkingTicket ticket = new ParkingTicket();
-    getParkingLotList().get(0).getMap().put(ticket, car);
+    ParkingTicket ticket = getParkingLotList().get(0).park(car);
     return new Response("", ticket);
   }
 
@@ -30,8 +29,7 @@ public class ParkingBoy {
     Car car = null;
     for (ParkingLot lot : getParkingLotList()) {
       if (lot.getMap().containsKey(ticket)) {
-        car = lot.getMap().get(ticket);
-        lot.getMap().remove(ticket);
+        car = lot.fetch(ticket);
       }
     }
     if (car == null) {
