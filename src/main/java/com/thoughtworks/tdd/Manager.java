@@ -1,40 +1,46 @@
 package com.thoughtworks.tdd;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Manager extends ParkingBoy {
-  private List<ParkingBoy> parkingBoyList;
-  private List<ParkingLot> parkingLotList;
+public class Manager {
+  private List<Parker> parkers =new ArrayList<>();
+  private List<ParkingLot> parkingLots = new ArrayList<>();
 
-  public Manager(List<ParkingLot> parkingLotList) {
-    this.parkingLotList = parkingLotList;
+  public Manager(Parker... parkers) {
+    this.parkers.addAll(Arrays.asList(parkers));
   }
 
-  public void distribute(ParkingBoy boy, List<ParkingLot> parkingLots) {
-    boy.setParkingLotList(parkingLots);
+  public Manager(ParkingLot... parkingLots) {
+    this.parkingLots.addAll(Arrays.asList(parkingLots));
   }
 
-  public ParkingTicket distributeParkingBoyToPark(ParkingBoy boy, Customer customer) {
-    return boy.park(customer.getCar());
+  public ParkingTicket park(Car car) {
+    for (Parker parker : parkers) {
+      return parker.park(car);
+    }
+    for (ParkingLot parkingLot : parkingLots) {
+      return parkingLot.park(car);
+    }
+    return park(car);
   }
 
-  public Car distributeParkingBoyToFetch(ParkingBoy boy, Customer customer) {
-    return boy.fetch(customer.getParkingTicket());
+  public Car fetch(ParkingTicket ticket) {
+    for (Parker parker : parkers) {
+      return parker.fetch(ticket);
+    }
+    for (ParkingLot parkingLot : parkingLots) {
+      return parkingLot.fetch(ticket);
+    }
+    return fetch(ticket);
   }
 
-  public void setParkingBoyList(List<ParkingBoy> parkingBoyList) {
-    this.parkingBoyList = parkingBoyList;
+  public void setParkers(List<Parker> parkers) {
+    this.parkers = parkers;
   }
 
-  public List<ParkingLot> getParkingLotList() {
-    return parkingLotList;
-  }
-
-  public void setParkingLotList(List<ParkingLot> parkingLotList) {
-    this.parkingLotList = parkingLotList;
-  }
-
-  public List<ParkingBoy> getParkingBoyList() {
-    return parkingBoyList;
+  public void setParkingLots(List<ParkingLot> parkingLots) {
+    this.parkingLots = parkingLots;
   }
 }

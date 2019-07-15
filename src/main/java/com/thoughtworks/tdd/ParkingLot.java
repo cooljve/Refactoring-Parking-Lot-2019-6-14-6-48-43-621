@@ -1,5 +1,7 @@
 package com.thoughtworks.tdd;
 
+import com.thoughtworks.tdd.exception.NOT_ENOUGH_POSITION_EXCEPTION;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,9 @@ public class ParkingLot {
   }
 
   public ParkingTicket park(Car car) {
+    if (isFull()) {
+      throw new NOT_ENOUGH_POSITION_EXCEPTION();
+    }
     ParkingTicket ticket = new ParkingTicket();
     map.put(ticket, car);
     return ticket;
