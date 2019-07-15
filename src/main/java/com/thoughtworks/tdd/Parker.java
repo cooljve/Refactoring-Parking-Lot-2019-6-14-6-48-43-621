@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Parker {
+public abstract class Parker implements Parkable{
   protected List<ParkingLot> parkingLots = new ArrayList<>();
 
   public Parker(ParkingLot...parkingLots) {
@@ -16,13 +16,21 @@ public abstract class Parker {
 
   public abstract ParkingTicket park(Car car);
 
+  public boolean isAllFull() {
+    return parkingLots.stream().allMatch(x -> x.isFull());
+  }
+
+  public boolean containsTicket(ParkingTicket ticket) {
+    return parkingLots.stream().anyMatch(x -> x.containsTicket(ticket));
+  }
+
   public Car fetch(ParkingTicket ticket) {
     if (ticket == null) {
       throw new TICKET_MISSING_EXCEPTION();
     }
     Car car = null;
     for (ParkingLot lot : parkingLots) {
-      if (lot.getMap().containsKey(ticket)) {
+      if (lot.containsTicket(ticket)) {
         car = lot.fetch(ticket);
       }
     }

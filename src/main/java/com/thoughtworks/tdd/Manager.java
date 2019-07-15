@@ -1,46 +1,38 @@
 package com.thoughtworks.tdd;
 
+import com.thoughtworks.tdd.exception.NOT_ENOUGH_POSITION_EXCEPTION;
+import com.thoughtworks.tdd.exception.UNRECOGNIZED_PARKING_TICKET_EXCEPTION;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Manager {
-  private List<Parker> parkers =new ArrayList<>();
-  private List<ParkingLot> parkingLots = new ArrayList<>();
+  private List<Parkable> parkables = new ArrayList<>();
 
-  public Manager(Parker... parkers) {
-    this.parkers.addAll(Arrays.asList(parkers));
-  }
-
-  public Manager(ParkingLot... parkingLots) {
-    this.parkingLots.addAll(Arrays.asList(parkingLots));
+  public Manager(Parkable... parkables) {
+    this.parkables.addAll(Arrays.asList(parkables));
   }
 
   public ParkingTicket park(Car car) {
-    for (Parker parker : parkers) {
-      return parker.park(car);
+    if (parkables.stream().allMatch(x -> x.isAllFull())) {
+      throw new NOT_ENOUGH_POSITION_EXCEPTION();
     }
-    for (ParkingLot parkingLot : parkingLots) {
-      return parkingLot.park(car);
+    for (Parkable parkable : parkables) {
+      if (!parkable.isAllFull()) {
+        return parkable.park(car);
+      }
     }
-    return park(car);
+    throw new NOT_ENOUGH_POSITION_EXCEPTION();
   }
 
   public Car fetch(ParkingTicket ticket) {
-    for (Parker parker : parkers) {
-      return parker.fetch(ticket);
+    for (Parkable parkable : parkables) {
+      if (parkable.containsTicket(ticket)) {
+        return parkable.fetch(ticket);
+      }
     }
-    for (ParkingLot parkingLot : parkingLots) {
-      return parkingLot.fetch(ticket);
-    }
-    return fetch(ticket);
+    throw new UNRECOGNIZED_PARKING_TICKET_EXCEPTION();
   }
 
-  public void setParkers(List<Parker> parkers) {
-    this.parkers = parkers;
-  }
-
-  public void setParkingLots(List<ParkingLot> parkingLots) {
-    this.parkingLots = parkingLots;
-  }
 }

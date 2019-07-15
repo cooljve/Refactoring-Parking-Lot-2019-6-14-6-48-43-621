@@ -124,7 +124,7 @@ class ParkingSystemTest {
   }
 
   @Test
-  public void should_should_throw_not_enough_position_exception_when_manage_park_give_full_parking_lot() {
+  public void should_throw_not_enough_position_exception_when_manage_park_give_full_parking_lot() {
     Car car = new Car();
     ParkingLot parkingLot = new ParkingLot(0);
     Manager manager = new Manager(parkingLot);
@@ -132,13 +132,17 @@ class ParkingSystemTest {
     assertThrows(NOT_ENOUGH_POSITION_EXCEPTION.class, () -> manager.park(car));
   }
 
+  @Test
+  public void should_should_throw_not_enough_position_exception_when_manage_park_give_full_parking_lot() {
+    Car car = new Car();
+    ParkingLot parkingLot1 = new ParkingLot(0);
+    ParkingLot parkingLot2 = new ParkingLot(2);
+    Manager manager = new Manager(parkingLot1, parkingLot2);
 
-  private Map<ParkingTicket, Car> expectMapWithSize(int i2) {
-    Map<ParkingTicket, Car> map1 = new HashMap<>();
-    for (int i = 0; i < i2; i++) {
-      map1.put(new ParkingTicket(), null);
-    }
-    return map1;
+    ParkingTicket ticket = manager.park(car);
+    Car fetchedCar = manager.fetch(ticket);
+
+    assertEquals(car, fetchedCar);
   }
 
 

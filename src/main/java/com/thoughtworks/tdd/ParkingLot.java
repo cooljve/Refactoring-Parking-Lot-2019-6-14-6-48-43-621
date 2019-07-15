@@ -5,7 +5,7 @@ import com.thoughtworks.tdd.exception.NOT_ENOUGH_POSITION_EXCEPTION;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParkingLot {
+public class ParkingLot implements Parkable{
   private final int capacity;
   private Map<ParkingTicket, Car> map = new HashMap<>();
 
@@ -15,6 +15,11 @@ public class ParkingLot {
 
   public Car fetch(ParkingTicket ticket) {
     return map.remove(ticket);
+  }
+
+  @Override
+  public boolean isAllFull() {
+    return isFull();
   }
 
   public ParkingTicket park(Car car) {
@@ -34,19 +39,15 @@ public class ParkingLot {
     return map;
   }
 
-  public void setMap(Map<ParkingTicket, Car> map) {
-    this.map = map;
-  }
-
-  public int getCapacity() {
-    return capacity;
-  }
-
   public int getAvailabel(){
     return capacity - map.size();
   }
 
   public double getAvailabelRate(){
     return getAvailabel() / (double) capacity;
+  }
+
+  public boolean containsTicket(ParkingTicket ticket) {
+    return map.containsKey(ticket);
   }
 }
