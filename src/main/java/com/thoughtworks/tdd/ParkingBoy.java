@@ -1,30 +1,27 @@
 package com.thoughtworks.tdd;
 
+import com.thoughtworks.tdd.exception.NOT_ENOUGH_POSITION_EXCEPTION;
+import com.thoughtworks.tdd.exception.TICKET_MISSING_EXCEPTION;
+import com.thoughtworks.tdd.exception.UNRECOGNIZED_PARKING_TICKET_EXCEPTION;
+
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.thoughtworks.tdd.Constant.NO_TICKET;
-import static com.thoughtworks.tdd.Constant.PARKING_LOT_IS_FULL;
-import static com.thoughtworks.tdd.Constant.WRONG_TICKET;
 
 public class ParkingBoy {
   private List<ParkingLot> parkingLotList;
 
-  public Response park(Car car) {
+  public ParkingTicket park(Car car) {
     setParkingLotList(getParkingLotList().stream().filter(x -> !x.isFull()).collect(Collectors.toList()));
     if (getParkingLotList().size() == 0) {
-      return new Response(PARKING_LOT_IS_FULL, null);
-    }
-    if (getParkingLotList().get(0).getMap().containsValue(car) || car == null) {
-      return new Response("", null);
+      throw new NOT_ENOUGH_POSITION_EXCEPTION();
     }
     ParkingTicket ticket = getParkingLotList().get(0).park(car);
-    return new Response("", ticket);
+    return ticket;
   }
 
-  public Response fetch(ParkingTicket ticket) {
+  public Car fetch(ParkingTicket ticket) {
     if (ticket == null) {
-      return new Response(NO_TICKET, null);
+      throw new TICKET_MISSING_EXCEPTION();
     }
     Car car = null;
     for (ParkingLot lot : getParkingLotList()) {
@@ -33,9 +30,9 @@ public class ParkingBoy {
       }
     }
     if (car == null) {
-      return new Response(WRONG_TICKET, null);
+      throw new UNRECOGNIZED_PARKING_TICKET_EXCEPTION();
     }
-    return new Response("", car);
+    return car;
   }
 
   public List<ParkingLot> getParkingLotList() {

@@ -14,20 +14,16 @@ public class Manager extends ParkingBoy {
     boy.setParkingLotList(parkingLots);
   }
 
-  public Response distributeParkingBoyToPark(ParkingBoy boy, Customer customer) {
+  public ParkingTicket distributeParkingBoyToPark(ParkingBoy boy, Customer customer) {
     return boy.park(customer.getCar());
   }
 
-  public Response distributeParkingBoyToFetch(ParkingBoy boy, Customer customer) {
+  public Car distributeParkingBoyToFetch(ParkingBoy boy, Customer customer) {
     return boy.fetch(customer.getParkingTicket());
   }
 
   public void setParkingBoyList(List<ParkingBoy> parkingBoyList) {
     this.parkingBoyList = parkingBoyList;
-  }
-
-  public Response park(Car car) {
-    return super.park(car);
   }
 
   public List<ParkingLot> getParkingLotList() {

@@ -1,5 +1,8 @@
 package com.thoughtworks.tdd;
 
+import com.thoughtworks.tdd.exception.NOT_ENOUGH_POSITION_EXCEPTION;
+import com.thoughtworks.tdd.exception.TICKET_MISSING_EXCEPTION;
+import com.thoughtworks.tdd.exception.UNRECOGNIZED_PARKING_TICKET_EXCEPTION;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -7,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.thoughtworks.tdd.Constant.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,8 +25,8 @@ class ParkingSystemTest {
     ParkingBoy parkingBoy = new ParkingBoy();
     //when
     parkingBoy.setParkingLotList(parkingLotList);
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(car).getObject();
-    Car fetchedCar = (Car) parkingBoy.fetch(ticket).getObject();
+    ParkingTicket ticket = parkingBoy.park(car);
+    Car fetchedCar = parkingBoy.fetch(ticket);
     //then
     assertEquals(car, fetchedCar);
   }
@@ -39,34 +41,17 @@ class ParkingSystemTest {
     ParkingBoy parkingBoy = new ParkingBoy();
     //when
     parkingBoy.setParkingLotList(parkingLotList);
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(firstCar).getObject();
-    ParkingTicket ticket1 = (ParkingTicket) parkingBoy.park(secondCar).getObject();
-    Car fetchedCar = (Car) parkingBoy.fetch(ticket).getObject();
-    Car fetchedCar1 = (Car) parkingBoy.fetch(ticket1).getObject();
+    ParkingTicket ticket = parkingBoy.park(firstCar);
+    ParkingTicket ticket1 = parkingBoy.park(secondCar);
+    Car fetchedCar = parkingBoy.fetch(ticket);
+    Car fetchedCar1 = parkingBoy.fetch(ticket1);
     //then
     assertEquals(firstCar, fetchedCar);
     assertEquals(secondCar, fetchedCar1);
   }
 
   @Test
-  public void should_null_when_fetch_car_with_wrong_ticket() {
-    //give
-    Customer customer = new Customer();
-    customer.setParkingTicket(new ParkingTicket());
-    List<ParkingLot> parkingLotList = new ArrayList<>();
-    parkingLotList.add(new ParkingLot(10));
-    ParkingBoy parkingBoy = new ParkingBoy();
-    //when
-    parkingBoy.setParkingLotList(parkingLotList);
-    Car fetchedCar = (Car) parkingBoy.fetch(customer.getParkingTicket()).getObject();
-    Car fetchedCar1 = (Car) parkingBoy.fetch(null).getObject();
-    //then
-    assertEquals(null, fetchedCar);
-    assertEquals(null, fetchedCar1);
-  }
-
-  @Test
-  public void should_null_when_fetch_car_give_used_ticket() {
+  public void should_throw_unrecognized_parking_ticket_exception_when_fetch_car_give_used_ticket() {
     //give
     Customer customer = new Customer();
     customer.setCar(new Car());
@@ -75,83 +60,15 @@ class ParkingSystemTest {
     ParkingBoy parkingBoy = new ParkingBoy();
     //when
     parkingBoy.setParkingLotList(parkingLotList);
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(customer.getCar()).getObject();
-    customer.setParkingTicket(ticket);
-    Car fetchedCar = (Car) parkingBoy.fetch(customer.getParkingTicket()).getObject();
-    Car fetchedCar1 = (Car) parkingBoy.fetch(customer.getParkingTicket()).getObject();
-    //then
-    assertEquals(customer.getCar(), fetchedCar);
-    assertEquals(null, fetchedCar1);
-  }
-
-  @Test
-  public void should_null_when_park_car_give_full_parkingLot() {
-    //give
-    Customer customer = new Customer();
-    customer.setCar(new Car());
-    ParkingLot parkingLot = mock(ParkingLot.class);
-    List<ParkingLot> parkingLotList = new ArrayList<>();
-    parkingLotList.add(parkingLot);
-    ParkingBoy parkingBoy = new ParkingBoy();
-    //when
-    parkingBoy.setParkingLotList(parkingLotList);
-    when(parkingLot.isFull()).thenReturn(true);
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(customer.getCar()).getObject();
-    customer.setParkingTicket(ticket);
-    //then
-    assertEquals(null, customer.getParkingTicket());
-  }
-
-  @Test
-  public void should_return_null_ticket_when_park_car_give_parkedCar() {
-    //give
-    Customer customer = new Customer();
-    customer.setCar(new Car());
-    List<ParkingLot> parkingLotList = new ArrayList<>();
-    parkingLotList.add(new ParkingLot(10));
-    ParkingBoy parkingBoy = new ParkingBoy();
-    //when
-    parkingBoy.setParkingLotList(parkingLotList);
-    parkingBoy.park(customer.getCar());
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(customer.getCar()).getObject();
-    //then
-    assertEquals(null, ticket);
-  }
-
-  @Test
-  public void should_return_null_ticket_when_park_car_give_null_car() {
-    //give
-    Customer customer = new Customer();
-    List<ParkingLot> parkingLotList = new ArrayList<>();
-    parkingLotList.add(new ParkingLot(10));
-    ParkingBoy parkingBoy = new ParkingBoy();
-    //when
-    parkingBoy.setParkingLotList(parkingLotList);
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(customer.getCar()).getObject();
-    //then
-    assertEquals(null, ticket);
-  }
-
-  @Test
-  public void should_return_error_string_when_fetch_car_give_used_ticket() {
-    //give
-    Customer customer = new Customer();
-    customer.setCar(new Car());
-    List<ParkingLot> parkingLotList = new ArrayList<>();
-    parkingLotList.add(new ParkingLot(10));
-    ParkingBoy parkingBoy = new ParkingBoy();
-    //when
-    parkingBoy.setParkingLotList(parkingLotList);
-    ParkingTicket ticket = (ParkingTicket) parkingBoy.park(customer.getCar()).getObject();
+    ParkingTicket ticket = parkingBoy.park(customer.getCar());
     customer.setParkingTicket(ticket);
     parkingBoy.fetch(customer.getParkingTicket());
-    Response response1 = parkingBoy.fetch(customer.getParkingTicket());
     //then
-    assertEquals(WRONG_TICKET, response1.getMessage());
+    assertThrows(UNRECOGNIZED_PARKING_TICKET_EXCEPTION.class, () -> parkingBoy.fetch(customer.getParkingTicket()));
   }
 
   @Test
-  public void should_return_error_string_when_fetch_car_give_no_ticket() {
+  public void should_throw_ticket_missing_exception_when_fetch_car_give_no_ticket() {
     //give
     Customer customer = new Customer();
     customer.setCar(new Car());
@@ -160,9 +77,8 @@ class ParkingSystemTest {
     ParkingBoy parkingBoy = new ParkingBoy();
     //when
     parkingBoy.setParkingLotList(parkingLotList);
-    Response response = parkingBoy.fetch(null);
     //then
-    assertEquals(NO_TICKET, response.getMessage());
+    assertThrows(TICKET_MISSING_EXCEPTION.class, () -> parkingBoy.fetch(null));
   }
 
   @Test
@@ -174,12 +90,11 @@ class ParkingSystemTest {
     List<ParkingLot> parkingLotList = new ArrayList<>();
     parkingLotList.add(parkingLot);
     ParkingBoy parkingBoy = new ParkingBoy();
+    when(parkingLot.isFull()).thenReturn(true);
     //when
     parkingBoy.setParkingLotList(parkingLotList);
-    when(parkingLot.isFull()).thenReturn(true);
-    Response response = parkingBoy.park(customer.getCar());
     //then
-    assertEquals(PARKING_LOT_IS_FULL, response.getMessage());
+    assertThrows(NOT_ENOUGH_POSITION_EXCEPTION.class, () -> parkingBoy.park(customer.getCar()));
   }
 
   @Test
@@ -193,12 +108,12 @@ class ParkingSystemTest {
     parkingLotList.add(parkingLot1);
     parkingLotList.add(parkingLot2);
     ParkingBoy parkingBoy = new ParkingBoy();
+    when(parkingLot1.isFull()).thenReturn(true);
     //when
     parkingBoy.setParkingLotList(parkingLotList);
-    when(parkingLot1.isFull()).thenReturn(true);
-    Response response = parkingBoy.park(customer.getCar());
+    ParkingTicket ticket = parkingBoy.park(customer.getCar());
     //then
-    assertNotNull(response.getObject());
+    assertNotNull(ticket);
   }
 
   @Test
@@ -253,33 +168,18 @@ class ParkingSystemTest {
   }
 
   @Test
-  public void should_return_null_when_distribute_different_parkingBoys_park_and_fetch_same_car_give_customer_and_manager() {
-    //give
-    Customer customer = new Customer();
-    customer.setCar(new Car());
-    Manager manager = expectManagerWithParkingBoysAndParkingLots();
-    //when
-    Response response = manager.distributeParkingBoyToPark(manager.getParkingBoyList().get(0), customer);
-    customer.setParkingTicket((ParkingTicket) response.getObject());
-    Response response1 = manager.distributeParkingBoyToFetch(manager.getParkingBoyList().get(1), customer);
-    //then
-    assertNotNull(response.getObject());
-    assertNull(response1.getObject());
-  }
-
-  @Test
   public void should_return_car_when_distribute_same_parkingBoy_park_and_fetch_same_car_give_customer_and_manager() {
     //give
     Customer customer = new Customer();
     customer.setCar(new Car());
     Manager manager = expectManagerWithParkingBoysAndParkingLots();
     //when
-    Response response = manager.distributeParkingBoyToPark(manager.getParkingBoyList().get(0), customer);
-    customer.setParkingTicket((ParkingTicket) response.getObject());
-    Response response1 = manager.distributeParkingBoyToFetch(manager.getParkingBoyList().get(0), customer);
+    ParkingTicket ticket = manager.distributeParkingBoyToPark(manager.getParkingBoyList().get(0), customer);
+    customer.setParkingTicket(ticket);
+    Car car = manager.distributeParkingBoyToFetch(manager.getParkingBoyList().get(0), customer);
     //then
-    assertNotNull(response.getObject());
-    assertNotNull(response1.getObject());
+    assertNotNull(ticket);
+    assertNotNull(car);
   }
 
   @Test
@@ -289,12 +189,12 @@ class ParkingSystemTest {
     customer.setCar(new Car());
     Manager manager = expectManagerWithParkingBoysAndParkingLots();
     //when
-    Response response = manager.distributeParkingBoyToPark(manager, customer);
-    customer.setParkingTicket((ParkingTicket) response.getObject());
-    Response response1 = manager.distributeParkingBoyToFetch(manager, customer);
+    ParkingTicket ticket = manager.distributeParkingBoyToPark(manager, customer);
+    customer.setParkingTicket(ticket);
+    Car car = manager.distributeParkingBoyToFetch(manager, customer);
     //then
-    assertNotNull(response.getObject());
-    assertNotNull(response1.getObject());
+    assertNotNull(ticket);
+    assertNotNull(car);
   }
 
   private Manager expectManagerWithParkingBoysAndParkingLots() {
